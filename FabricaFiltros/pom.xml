@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.tuberiasfiltros</groupId>
+        <artifactId>TuberiasFiltros-Parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>FabricaFiltros</artifactId>
+    <name>FabricaFiltros - Fabrica Centralizada (Singleton + Factory Method)</name>
+
+    <!--
+        Componente TRANSVERSAL: visible para todas las capas.
+        Centraliza la creación de todos los filtros, el GestorTuberias
+        y cualquier objeto del sistema.
+
+        Igual que FabricaDTO en ComponentesConCapas.
+    -->
+    <dependencies>
+        <!-- Base transversal -->
+        <dependency>
+            <groupId>com.tuberiasfiltros</groupId>
+            <artifactId>Datos</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tuberiasfiltros</groupId>
+            <artifactId>Interfaces</artifactId>
+        </dependency>
+
+        <!-- Motor (para crear GestorTuberias) -->
+        <dependency>
+            <groupId>com.tuberiasfiltros</groupId>
+            <artifactId>Motor</artifactId>
+        </dependency>
+
+        <!-- Los 8 filtros (para instanciarlos via Factory Method) -->
+        <dependency>
+            <groupId>com.tuberiasfiltros</groupId>
+            <artifactId>1-CargarArchivo</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tuberiasfiltros</groupId>
+            <artifactId>2-TextoABinario</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tuberiasfiltros</groupId>
+            <artifactId>3-FiltroImagenes</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tuberiasfiltros</groupId>
+            <artifactId>4-BinarioABase64</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tuberiasfiltros</groupId>
+            <artifactId>5-Base64ABinario</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tuberiasfiltros</groupId>
+            <artifactId>6-EncriptarSHA256</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tuberiasfiltros</groupId>
+            <artifactId>7-BuscarPalabra</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tuberiasfiltros</groupId>
+            <artifactId>8-ContarOcurrencias</artifactId>
+        </dependency>
+    </dependencies>
+</project>

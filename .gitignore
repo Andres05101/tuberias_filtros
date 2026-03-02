@@ -1,0 +1,70 @@
+# ══════════════════════════════════════════
+#  Maven — compilados y empaquetados
+# ══════════════════════════════════════════
+target/
+*.class
+*.jar
+*.war
+
+# Maven Wrapper
+.mvn/wrapper/maven-wrapper.jar
+
+# ══════════════════════════════════════════
+#  Archivos generados por la aplicación
+# ══════════════════════════════════════════
+# Resultados de los filtros (se regeneran al ejecutar)
+output/
+
+# ══════════════════════════════════════════
+#  IDEs
+# ══════════════════════════════════════════
+
+# IntelliJ IDEA / Cursor
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# NetBeans
+nbproject/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# VS Code / Cursor
+.vscode/
+
+# ══════════════════════════════════════════
+#  Sistema Operativo
+# ══════════════════════════════════════════
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ══════════════════════════════════════════
+#  Logs y temporales
+# ══════════════════════════════════════════
+*.log
+*.tmp
+*.swp
+*.bak
