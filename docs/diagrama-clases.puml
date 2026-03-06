@@ -1,0 +1,191 @@
+@startuml diagrama-clases
+!theme plain
+title Diagrama de Clases - Tuberías y Filtros
+
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 10
+
+' ========== DATOS ==========
+package "datos" #E8F5E9 {
+  enum TipoDato {
+    PATH
+    TEXTO
+    BINARIO
+    BASE64
+    IMAGEN
+    LISTA_TEXTO
+    LISTA_BINARIO
+    LISTA_BASE64
+    LISTA_IMAGEN
+    --
+    esLista() : boolean
+    aLista() : TipoDato
+    aSingle() : TipoDato
+  }
+
+  class PaqueteDatos {
+    - tipo : TipoDato
+    - datos : byte[]
+    - lista : List<byte[]>
+    --
+    + PaqueteDatos(tipo, datos)
+    + PaqueteDatos(tipo, lista)
+    + getTipo() : TipoDato
+    + getDatos() : byte[]
+    + getLista() : List<byte[]>
+    + esLista() : boolean
+    + aLista() : PaqueteDatos
+    + primerElemento() : PaqueteDatos
+    + getDatosComoString() : String
+    + getTamanioBytes() : long
+  }
+  PaqueteDatos --> TipoDato : usa
+}
+
+' ========== INTERFACES ==========
+package "interfaces" #E3F2FD {
+  interface IFiltro {
+    + procesar(entrada : PaqueteDatos) : PaqueteDatos
+    + getId() : int
+    + getNombre() : String
+    + getDescripcion() : String
+    + getTipoEntrada() : TipoDato
+    + getTipoSalida() : TipoDato
+  }
+  interface IFiltroMultiple {
+    + getNumHilos() : int
+  }
+  IFiltro <|.. IFiltroMultiple : extiende
+  IFiltro ..> PaqueteDatos : usa
+  IFiltro ..> TipoDato : usa
+}
+
+' ========== MOTOR ==========
+package "motor" #FFF3E0 {
+  class Tuberia {
+    - nombre : String
+    - filtros : List<IFiltro>
+    --
+    + Tuberia(nombre : String)
+    + agregarFiltro(filtro : IFiltro) : boolean
+    + ejecutar(entradaInicial : PaqueteDatos) : PaqueteDatos
+    + getNombre() : String
+    + getFiltros() : List<IFiltro>
+    + size() : int
+    + estaVacia() : boolean
+    + getTipoEntrada() : TipoDato
+    + getTipoSalida() : TipoDato
+    + describir() : String
+    --
+    {static} sonCompatibles(salida, entrada : TipoDato) : boolean
+  }
+
+  class GestorTuberias {
+    - filtrosDisponibles : List<IFiltro>
+    - tuberias : Map<String, Tuberia>
+    --
+    + GestorTuberias(filtrosDisponibles : List<IFiltro>)
+    + crearTuberia(nombre : String) : Tuberia
+    + eliminarTuberia(nombre : String) : boolean
+    + getTuberias() : Map<String, Tuberia>
+    + getTuberia(nombre : String) : Tuberia
+    + getFiltrosDisponibles() : List<IFiltro>
+    + getFiltroById(id : int) : IFiltro
+    + esCompatible(tuberia : Tuberia, filtro : IFiltro) : boolean
+    + esCompatible(filtrosActuales : List<IFiltro>, filtro : IFiltro) : boolean
+    + resumenFiltros() : String
+  }
+
+  Tuberia o-- "1..*" IFiltro : contiene
+  Tuberia ..> PaqueteDatos : usa
+  Tuberia ..> TipoDato : usa
+  GestorTuberias *-- "1..*" Tuberia : gestiona
+  GestorTuberias o-- "1..*" IFiltro : catálogo
+}
+
+' ========== FÁBRICA ==========
+package "fabrica" #F3E5F5 {
+  class FabricaFiltros {
+    - {static} instancia : FabricaFiltros
+    --
+    - FabricaFiltros()
+    + {static} getInstance() : FabricaFiltros
+    + crearFiltro1() : IFiltro
+    + crearFiltro2() : IFiltro
+    + crearFiltro3() : IFiltro
+    + crearFiltro4() : IFiltro
+    + crearFiltro5() : IFiltro
+    + crearFiltro6() : IFiltro
+    + crearFiltro7(palabra : String) : IFiltro
+    + crearFiltro8(palabra : String) : IFiltro
+    + crearFiltro(id : int) : IFiltro
+    + crearGestorTuberias() : GestorTuberias
+  }
+  FabricaFiltros ..> IFiltro : crea
+  FabricaFiltros ..> GestorTuberias : crea
+}
+
+' ========== FILTROS CONCRETOS ==========
+package "filtros (implementaciones)" #ECEFF1 {
+  class CargarArchivoDeTexto
+  class ConvertirTextoABinario
+  class ConvertirBase64ABinario
+  class EncriptarArchivoTextoSHA256
+  class FiltroImagenes
+  class ConvertirBinarioABase64
+  class BuscarPalabraEnArchivoTexto
+  class ListarPalabrasFrecuenciaDeOcurrencia
+}
+
+' Conexiones: filtros implementan interfaces
+CargarArchivoDeTexto ..|> IFiltro
+ConvertirTextoABinario ..|> IFiltro
+ConvertirBase64ABinario ..|> IFiltro
+EncriptarArchivoTextoSHA256 ..|> IFiltro
+FiltroImagenes ..|> IFiltroMultiple
+ConvertirBinarioABase64 ..|> IFiltroMultiple
+BuscarPalabraEnArchivoTexto ..|> IFiltroMultiple
+ListarPalabrasFrecuenciaDeOcurrencia ..|> IFiltroMultiple
+
+' FabricaFiltros crea instancias de los filtros concretos
+FabricaFiltros ..> CargarArchivoDeTexto : crea
+FabricaFiltros ..> ConvertirTextoABinario : crea
+FabricaFiltros ..> FiltroImagenes : crea
+FabricaFiltros ..> ConvertirBinarioABase64 : crea
+FabricaFiltros ..> ConvertirBase64ABinario : crea
+FabricaFiltros ..> EncriptarArchivoTextoSHA256 : crea
+FabricaFiltros ..> BuscarPalabraEnArchivoTexto : crea
+FabricaFiltros ..> ListarPalabrasFrecuenciaDeOcurrencia : crea
+
+' ========== PRESENTACIÓN E INICIO ==========
+package "presentacion" #E8EAF6 {
+  class VistaEscritorio {
+    - fabrica : FabricaFiltros
+    - gestor : GestorTuberias
+    - outputDir : File
+    - datosPrevios : PaqueteDatos
+    - ultimoResultado : PaqueteDatos
+    - filtroActual : IFiltro
+    - cardLayout : CardLayout
+    - panelCards : JPanel
+    --
+    + VistaEscritorio(fabrica : FabricaFiltros, gestor : GestorTuberias)
+    + mostrar() : void
+  }
+  class JFrame <<external>>
+  VistaEscritorio --|> JFrame : extiende
+  VistaEscritorio o-- FabricaFiltros : usa
+  VistaEscritorio o-- GestorTuberias : usa
+  VistaEscritorio ..> IFiltro : usa
+  VistaEscritorio ..> PaqueteDatos : usa
+}
+
+package "inicio" #E0F2F1 {
+  class InicioAplicacion {
+    + {static} main(args : String[]) : void
+  }
+  InicioAplicacion ..> FabricaFiltros : usa
+  InicioAplicacion ..> VistaEscritorio : crea
+}
+
+@enduml

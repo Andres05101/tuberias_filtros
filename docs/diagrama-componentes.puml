@@ -1,0 +1,90 @@
+@startuml diagrama-componentes
+!theme plain
+title Diagrama de Componentes - Tuberías y Filtros
+
+skinparam componentStyle rectangle
+skinparam defaultFontSize 11
+
+' === Capa base (transversal) ===
+package "Base transversal" #E8F5E9 {
+  [Datos\nPaqueteDatos, TipoDato] as Datos
+  [Interfaces\nIFiltro, IFiltroMultiple] as Interfaces
+}
+
+' === Motor (orquestación de tuberías) ===
+package "Motor" #E3F2FD {
+  [Motor\nTuberia, GestorTuberias] as MotorComp
+}
+
+' === Filtros (8 componentes independientes) ===
+package "Filtros" #FFF3E0 {
+  [1_CargarArchivo] as F1
+  [2_TextoABinario] as F2
+  [3_FiltroImagenes] as F3
+  [4_BinarioABase64] as F4
+  [5_Base64ABinario] as F5
+  [6_EncriptarSHA256] as F6
+  [7_BuscarPalabra] as F7
+  [8_ContarOcurrencias] as F8
+}
+
+' === Fábrica y capas de aplicación ===
+package "Aplicación" #F3E5F5 {
+  [FabricaFiltros\nSingleton + Factory] as Fabrica
+  [Presentacion\nVistaEscritorio] as Presentacion
+  [Inicio\nmain / JAR ejecutable] as Inicio
+}
+
+' --- Dependencias base ---
+Interfaces -[#gray]-> Datos : usa
+
+MotorComp -[#gray]-> Interfaces : usa
+MotorComp -[#gray]-> Datos : usa
+
+F1 -[#gray]-> Interfaces : implementa
+F1 -[#gray]-> Datos : usa
+F2 -[#gray]-> Interfaces : implementa
+F2 -[#gray]-> Datos : usa
+F3 -[#gray]-> Interfaces : implementa
+F3 -[#gray]-> Datos : usa
+F4 -[#gray]-> Interfaces : implementa
+F4 -[#gray]-> Datos : usa
+F5 -[#gray]-> Interfaces : implementa
+F5 -[#gray]-> Datos : usa
+F6 -[#gray]-> Interfaces : implementa
+F6 -[#gray]-> Datos : usa
+F7 -[#gray]-> Interfaces : implementa
+F7 -[#gray]-> Datos : usa
+F8 -[#gray]-> Interfaces : implementa
+F8 -[#gray]-> Datos : usa
+
+' --- FabricaFiltros crea Motor y todos los filtros ---
+Fabrica -[#gray]-> MotorComp : crea GestorTuberias
+Fabrica -[#gray]-> Datos : usa
+Fabrica -[#gray]-> Interfaces : usa
+Fabrica -[#gray]-> F1 : instancia
+Fabrica -[#gray]-> F2 : instancia
+Fabrica -[#gray]-> F3 : instancia
+Fabrica -[#gray]-> F4 : instancia
+Fabrica -[#gray]-> F5 : instancia
+Fabrica -[#gray]-> F6 : instancia
+Fabrica -[#gray]-> F7 : instancia
+Fabrica -[#gray]-> F8 : instancia
+
+' --- Presentación usa Fábrica y Motor ---
+Presentacion -[#blue]-> Fabrica : usa
+Presentacion -[#blue]-> MotorComp : usa
+Presentacion -[#gray]-> Interfaces : usa
+Presentacion -[#gray]-> Datos : usa
+
+' --- Punto de entrada ---
+Inicio -[#blue]-> Presentacion : arranca
+Inicio -[#blue]-> Fabrica : obtiene instancia
+
+legend right
+  |= Línea |= Significado |
+  | gris | dependencia técnica (API/DTO) |
+  | azul | flujo de arranque / uso principal |
+endlegend
+
+@enduml
